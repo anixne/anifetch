@@ -12,8 +12,6 @@
 
 #define MAX_LINE_LENGTH 256
 
-//colors:
-
 #define BLACK_CL "\033[0;30m"
 #define RED_CL "\033[0;31m"
 #define GREEN_CL "\033[1;32m"
@@ -29,8 +27,8 @@
 #endif
 
 void print_error(char*);
-float simplify(char* ,long);
-long getRamCapacity(void);
+float simplify(char* , void*);
+void* getRamCapacity(void);
 
 #ifdef __cplusplus
     }

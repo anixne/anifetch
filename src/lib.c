@@ -4,17 +4,19 @@ void print_error(char* errorMsg) {
     printf( RED_CL"%s\n" DEFAULT_CL, errorMsg);
 }
 
-float simplify(char* index, long size) {
+float simplify(char* index, void* size) {
+    unsigned long cap = ((unsigned long) size);
     const int BASE = 1024;
-    int base = log(size) / log(BASE);
-    *index = base;
+    int base = log(cap) / log(BASE);
+    if(index != NULL)
+        *index = base;
 
-    return (size / pow(1024, base));
+    return (cap / pow(1024, base));
 }
 
-long getRamCapacity(void) {
-    long pages = sysconf(_SC_PHYS_PAGES);
-    long page_size = sysconf(_SC_PAGE_SIZE);
+void* getRamCapacity(void) {
+    unsigned long pages = sysconf(_SC_PHYS_PAGES);
+    unsigned long page_size = sysconf(_SC_PAGE_SIZE);
 
-    return (pages * page_size);
+    return (void*)(pages * page_size);
 }

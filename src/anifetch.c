@@ -23,7 +23,7 @@ int main(void) {
         return 1;
     }
     printf(BLUE_CL "Hostname: %s\n" DEFAULT_CL, hostname);
-    free(hostname); //hostname releasing
+    free(hostname);
 
    //shell
    char* shell = getenv("SHELL");
@@ -36,7 +36,7 @@ int main(void) {
             break;
         }
     }
-    free(line); //releasing line
+    free(line);
     
     //raminfo
     char* units[] = { "B", "KB", "MB", "GB", "TB", "PB" };
@@ -44,11 +44,10 @@ int main(void) {
     float* mem = (float*) malloc(sizeof(float));
     char* unit = (char*) malloc(sizeof(char));
     
-    *ram_capacity = getRamCapacity();
-    *mem = simplify(unit, *ram_capacity);
+    *ram_capacity = (long) getRamCapacity();
+    *mem = simplify(unit, (void*) (*ram_capacity));
     printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[*unit]);
 
-    free(unit);
     free(ram_capacity);
     free(mem);
 
@@ -69,11 +68,12 @@ int main(void) {
     // disk usage
     unsigned long long block_size = fs_info.f_frsize; 
     unsigned long long total_blocks = fs_info.f_blocks;
-    unsigned long long free_blocks = fs_info.f_bfree; 
-    unsigned long long total_size = block_size * total_blocks / (1024.0 * 1024.0 * 1024.0);
-    unsigned long long free_size = block_size * free_blocks / (1024.0 * 1024.0 * 1024.0);
-    //TODO: automatic scale measure
+    unsigned long long free_blocks = fs_info.f_bfree;
+    unsigned long long total_size = simplify((void*) 0, (void*)(block_size * total_blocks));
+    unsigned long long free_size = simplify(unit, (void*)(block_size * free_blocks));
 
-    printf(WHITE_CL "Disk usage: %llu / %llu Gb\n" DEFAULT_CL, total_size, free_size);
+    printf(WHITE_CL "Disk usage: %llu / %llu %s\n" DEFAULT_CL, total_size, free_size, units[*unit]);
+    
+    free(unit);
     return 0;
 }

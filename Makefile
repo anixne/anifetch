@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 FLAGS=-g -lm
 BINDIR=bin
 SRCDIR=src
