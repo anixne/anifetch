@@ -4,13 +4,12 @@ int main(void) {
     char* line = (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
     struct utsname sys_info;
     FILE *cpuinfo_file = fopen("/proc/cpuinfo", "r");
-    FILE *meminfo_file = fopen("/proc/meminfo", "r");
     //Os & kernel info
     if (uname(&sys_info) == -1) {
         print_error("Error");
         return 1;
     }
-    if (cpuinfo_file == NULL || meminfo_file == NULL) {
+    if (cpuinfo_file == NULL) {
         print_error("Error opening system information files");
         return 1;
     }
@@ -37,14 +36,21 @@ int main(void) {
             break;
         }
     }
-    //raminfo
-    while (fgets(line, MAX_LINE_LENGTH, meminfo_file) != NULL) {
-        if (strstr(line, "MemTotal") != NULL) {
-            printf(CYAN_CL "RAM: %s" DEFAULT_CL, line + strlen("MemTotal:") +8);
-            break;
-        }
-    }
     free(line); //releasing line
+    
+    //raminfo
+    char* units[] = { "B", "KB", "MB", "GB", "TB", "PB" };
+    long* ram_capacity = (long*) malloc(sizeof(long));
+    float* mem = (float*) malloc(sizeof(float));
+    char* unit = (char*) malloc(sizeof(char));
+    
+    *ram_capacity = getRamCapacity();
+    *mem = simplify(unit, *ram_capacity);
+    printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[*unit]);
+
+    free(unit);
+    free(ram_capacity);
+    free(mem);
 
     //uptimeinfo
     printf(YELLOW_CL "Uptime: ");
@@ -52,7 +58,6 @@ int main(void) {
     system("uptime -p");
     printf(DEFAULT_CL);
     fclose(cpuinfo_file);
-    fclose(meminfo_file);
     struct statvfs fs_info;
     const char *path = "/"; 
 

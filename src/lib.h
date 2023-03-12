@@ -7,6 +7,8 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <sys/statvfs.h>
+#include <ctype.h>
+#include <math.h>
 
 #define MAX_LINE_LENGTH 256
 
@@ -27,7 +29,8 @@
 #endif
 
 void print_error(char*);
-// float convert_memory(char* unit, );
+float simplify(char* ,long);
+long getRamCapacity(void);
 
 #ifdef __cplusplus
     }

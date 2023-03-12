@@ -1,5 +1,5 @@
 CC=clang
-FLAGS=-g
+FLAGS=-g -lm
 BINDIR=bin
 SRCDIR=src
 MAIN=main
