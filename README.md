@@ -1,11 +1,13 @@
 # anifetch
 simple fetcher tool(alternative of neofetch)
 
-#installation
+##installation
 ```bash
 paru -S anifetch
-```<br>
+```
+<br>
 or
+
 ```bash
 git clone https://github.com/anixne/anifetch.git
 make
