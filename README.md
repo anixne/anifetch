@@ -2,4 +2,6 @@
 alternative of neofetch/xifetch
 
 To compile <br>
-```make```
+```make```<br><br>
+To run
+```make run -s```<br>
