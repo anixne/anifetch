@@ -1,15 +1,15 @@
 #ifndef _ANIFETCH_LIB_H
 #define _ANIFETCH_LIB_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/utsname.h>
-#include <unistd.h>
-#include <sys/statvfs.h>
 #include <ctype.h>
 #include <math.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/statvfs.h>
+#include <sys/utsname.h>
+#include <unistd.h>
 
 #define MAX_LINE_LENGTH 256
 
@@ -24,15 +24,15 @@
 #define DEFAULT_CL "\033[0m"
 
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 
-void print_error(char*);
-float simplify(char* , void*);
-void* getRamCapacity(void);
+void print_error(char *);
+float simplify(char *, void *);
+void *getRamCapacity(void);
 
 #ifdef __cplusplus
-    }
+}
 #endif
 
 #endif
