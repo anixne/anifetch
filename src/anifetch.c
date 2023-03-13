@@ -17,8 +17,8 @@ int main(void) {
   printf(YELLOW_CL "Kernel version: %s\n" DEFAULT_CL, sys_info.release);
 
   // hostname
-  char *hostname = (char *)calloc(32, sizeof(char));
-  if (gethostname(hostname, sizeof(hostname) * MAX_LINE_LENGTH) == -1) {
+  char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
+  if (gethostname(hostname, sizeof(hostname) * 32) == -1) {
     print_error("Failed to get hostname");
     return 1;
   }
