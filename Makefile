@@ -11,7 +11,7 @@ main: $(SOURCE)
 	$(CC) $(FLAGS) $(SOURCE) -o $(BINDIR)/$(MAIN)
 
 always:
-	mkdir -p bin
+	mkdir -p $(BINDIR)
 
 run:
 	$(BINDIR)/$(MAIN)
@@ -20,4 +20,4 @@ debug:
 	gdb $(BINDIR)/$(MAIN)
 
 clean:
-	rm -rf bin
+	rm -rf $(BINDIR)
