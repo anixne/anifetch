@@ -18,7 +18,7 @@ int main(void) {
 
   // hostname
   char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
-  if (gethostname(hostname, sizeof(hostname)) == -1) {
+  if (gethostname(hostname, sizeof(hostname) * MAX_LINE_LENGTH) == -1) {
     print_error("Failed to get hostname");
     return 1;
   }
