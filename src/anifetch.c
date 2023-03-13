@@ -30,9 +30,10 @@ int main(void) {
     printf(PURPLE_CL "Current shell: %s\n" DEFAULT_CL, shell);
 
    //cpuinfo
+    uint8_t cores = sysconf(_SC_NPROCESSORS_ONLN);
     while (fgets(line, MAX_LINE_LENGTH, cpuinfo_file) != NULL) {
         if (strstr(line, "model name") != NULL) {
-            printf(GREEN_CL "CPU: %s" DEFAULT_CL, line + strlen("model name")+3);
+            printf(GREEN_CL "CPU (%d): %s" DEFAULT_CL, cores, line + strlen("model name")+3);
             break;
         }
     }
