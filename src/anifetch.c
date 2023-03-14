@@ -1,87 +1,83 @@
 #include "lib.h"
-
 int main(void) {
-    char line[MAX_LINE_LENGTH];
-    struct utsname sys_info;
-    FILE *cpuinfo_file = fopen("/proc/cpuinfo", "r");
-    FILE *meminfo_file = fopen("/proc/meminfo", "r");
-    //Os & kernel info
-    if (uname(&sys_info) == -1) {
-        perror("Error");
-        return 1;
+  char *line = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
+  struct utsname sys_info;
+  FILE *cpuinfo_file = fopen("/proc/cpuinfo", "r");
+  // Os & kernel info
+  if (uname(&sys_info) == -1) {
+    print_error("Error");
+    return 1;
+  }
+  if (cpuinfo_file == NULL) {
+    print_error("Error opening system information files");
+    return 1;
+  }
+  printf(GREEN_CL "Operating System: %s\n" DEFAULT_CL, sys_info.sysname);
+  printf(YELLOW_CL "Kernel version: %s\n" DEFAULT_CL, sys_info.release);
+
+  // hostname
+  char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
+  if (gethostname(hostname, sizeof(hostname) * 32) == -1) {
+    print_error("Failed to get hostname");
+    return 1;
+  }
+  printf(BLUE_CL "Hostname: %s\n" DEFAULT_CL, hostname);
+  free(hostname);
+
+  // shell
+  char *shell = getenv("SHELL");
+  printf(PURPLE_CL "Current shell: %s\n" DEFAULT_CL, shell);
+
+  // cpuinfo
+  uint8_t cores = sysconf(_SC_NPROCESSORS_ONLN);
+  while (fgets(line, MAX_LINE_LENGTH, cpuinfo_file) != NULL) {
+    if (strstr(line, "model name") != NULL) {
+      printf(GREEN_CL "CPU (%d): %s" DEFAULT_CL, cores,
+             line + strlen("model name") + 3);
+      break;
     }
-    if (cpuinfo_file == NULL || meminfo_file == NULL) {
-        perror("Error opening system information files");
-        return 1;
-    }
-    printf("Operating System: %s\n", sys_info.sysname);
-    printf("Kernel version: %s\n", sys_info.release);
-    
-    //DE
-    char *envVarValue = getenv("XDG_CURRENT_DESKTOP");
-    if (envVarValue == NULL) {
-        printf("Desktop environment not found\n");
-        return 1;
-    }
-    printf("DE: %s\n", envVarValue);
-    
-    //gpu
-    //TODO
+  }
+  free(line);
 
-    // Print the model of the GPU
-    printf("GPU model: %s\n", model);
+  // raminfo
+  char *units[] = {"B", "KB", "MB", "GB", "TB", "PB"};
+  long *ram_capacity = (long *)malloc(sizeof(long));
+  float *mem = (float *)malloc(sizeof(float));
+  char *unit = (char *)malloc(sizeof(char));
 
-    // Close the file stream
-    pclose(fp);
+  *ram_capacity = (long)getRamCapacity();
+  *mem = simplify(unit, (void *)(*ram_capacity));
+  printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[*unit]);
 
-    //hostname
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) == -1) {
-        printf("Failed to get hostname\n");
-        return 1;
-    }
-    printf("Hostname: %s\n", hostname);
+  free(ram_capacity);
+  free(mem);
 
-   //shell
-   char* shell = getenv("SHELL");
-    printf("Current shell: %s\n", shell);
+  // uptimeinfo
+  printf(YELLOW_CL "Uptime: ");
+  fflush(stdout);
+  system("uptime -p");
+  printf(DEFAULT_CL);
+  fclose(cpuinfo_file);
+  struct statvfs fs_info;
+  const char *path = "/";
 
-   //cpuinfo
-    while (fgets(line, MAX_LINE_LENGTH, cpuinfo_file) != NULL) {
-        if (strstr(line, "model name") != NULL) {
-            printf("CPU: %s", line + strlen("model name")+3);
-            break;
-        }
-    }
-    //raminfo
-    while (fgets(line, MAX_LINE_LENGTH, meminfo_file) != NULL) {
-        if (strstr(line, "MemTotal") != NULL) {
-            printf("RAM: %s", line  + strlen("MemTotal:") +8) ;
-            break;
-        }
-    }
-    //uptimeinfo
-    printf("Uptime: ");
-    fflush(stdout);
-    system("uptime -p");
-    fclose(cpuinfo_file);
-    fclose(meminfo_file);
-    struct statvfs fs_info;
-    const char *path = "/"; 
+  if (statvfs(path, &fs_info) != 0) {
+    print_error("Error calling statvfs");
+    return 1;
+  }
 
-    if (statvfs(path, &fs_info) != 0) {
-        perror("Error calling statvfs");
-        return 1;
-    }
+  // disk usage
+  unsigned long long block_size = fs_info.f_frsize;
+  unsigned long long total_blocks = fs_info.f_blocks;
+  unsigned long long free_blocks = fs_info.f_bfree;
+  unsigned long long total_size =
+      simplify((void *)0, (void *)(block_size * total_blocks));
+  unsigned long long free_size =
+      simplify(unit, (void *)(block_size * free_blocks));
 
-    // disk usage
-    unsigned long long block_size = fs_info.f_frsize; 
-    unsigned long long total_blocks = fs_info.f_blocks;
-    unsigned long long free_blocks = fs_info.f_bfree; 
-    unsigned long long total_size = block_size * total_blocks / (1024.0 * 1024.0 * 1024.0);
-    unsigned long long free_size = block_size * free_blocks / (1024.0 * 1024.0 * 1024.0); 
+  printf(WHITE_CL "Disk usage: %llu / %llu %s\n" DEFAULT_CL, total_size,
+         free_size, units[*unit]);
 
-    printf("Disk usage: %llu / %llu Gb\n", total_size, free_size);
-    return 0;
+  free(unit);
+  return 0;
 }
-
