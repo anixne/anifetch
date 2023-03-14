@@ -10,6 +10,5 @@ or
 git clone https://github.com/anixne/anifetch.git
 make
 make run -s
-```
-<br>
+```<br>
 ![image](./assets/visuality.png)
