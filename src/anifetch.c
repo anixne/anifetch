@@ -14,7 +14,15 @@ int main(void) {
   }
   printf(GREEN_CL "Operating System: %s\n" DEFAULT_CL, sys_info.sysname);
   printf(YELLOW_CL "Kernel version: %s\n" DEFAULT_CL, sys_info.release);
-
+  
+   //DE
+    char *envVarValue = getenv("XDG_CURRENT_DESKTOP");
+    if (envVarValue == NULL) {
+        printf("Desktop environment not found\n");
+        return 1;
+    }
+    printf("DE: %s\n", envVarValue);
+  
   // hostname
   char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
   if (gethostname(hostname, sizeof(hostname) * 32) == -1) {
