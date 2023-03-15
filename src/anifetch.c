@@ -54,7 +54,7 @@ char* get_gpu_info()
 }
     char* gpu_info;
     gpu_info = get_gpu_info();
-    printf("GPU: %s\n", gpu_info);
+    printf(WHITE_CL "GPU: %s\n" DEFAULT_CL, gpu_info);
     free(gpu_info);
 
   
