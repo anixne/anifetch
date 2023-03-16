@@ -1,4 +1,5 @@
 #include "lib.h"
+
 int main(void) {
   char *line = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
   struct utsname sys_info;
@@ -14,58 +15,15 @@ int main(void) {
   }
   printf(GREEN_CL "Operating System: %s\n" DEFAULT_CL, sys_info.sysname);
   printf(YELLOW_CL "Kernel version: %s\n" DEFAULT_CL, sys_info.release);
-   //GPU
-  #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#define MAX_LINE_LENGTH 256
+  // DE
+  char *envVarValue = getenv("XDG_CURRENT_DESKTOP");
+  if (envVarValue == NULL) {
+    printf("Desktop environment not found\n");
+    return 1;
+  }
+  printf("DE: %s\n", envVarValue);
 
-char* get_gpu_info()
-{
-    FILE* fp;
-    char line[MAX_LINE_LENGTH];
-    char* model = NULL;
-
-    fp = popen("lspci | grep VGA", "r");
-    if (fp == NULL) {
-        return strdup("Unknown");
-    }
-
-    fgets(line, MAX_LINE_LENGTH, fp);
-    model = strstr(line, "VGA compatible controller");
-    if (model != NULL) {
-        model = strtok(model, ":");
-        model = strtok(NULL, ":");
-        while (*model == ' ') {
-            model++;
-        }
-        char* end = model + strlen(model) - 1;
-        while (*end == '\n' || *end == ' ') {
-            *end = '\0';
-            end--;
-        }
-    } else {
-        model = "Unknown";
-    }
-    pclose(fp);
-
-    return strdup(model);
-}
-    char* gpu_info;
-    gpu_info = get_gpu_info();
-    printf(WHITE_CL "GPU: %s\n" DEFAULT_CL, gpu_info);
-    free(gpu_info);
-
-  
-   //DE
-    char *envVarValue = getenv("XDG_CURRENT_DESKTOP");
-    if (envVarValue == NULL) {
-        printf("Desktop environment not found\n");
-        return 1;
-    }
-    printf("DE: %s\n", envVarValue);
-  
   // hostname
   char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
   if (gethostname(hostname, sizeof(hostname) * 32) == -1) {
@@ -89,6 +47,10 @@ char* get_gpu_info()
     }
   }
   free(line);
+
+  //GPU
+
+  printGpuInfo();
 
   // raminfo
   char *units[] = {"B", "KB", "MB", "GB", "TB", "PB"};

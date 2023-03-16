@@ -15,6 +15,7 @@
 
 #define BLACK_CL "\033[0;30m"
 #define RED_CL "\033[0;31m"
+#define BOLD_RED_CL "\033[1;31m"
 #define GREEN_CL "\033[1;32m"
 #define YELLOW_CL "\033[1;33m"
 #define BLUE_CL "\033[1;34m"
@@ -30,6 +31,11 @@ extern "C" {
 void print_error(char *);
 float simplify(char *, void *);
 void *getRamCapacity(void);
+void printGpuInfo(void);
+char* ltrim(char*);
+char* trim(char*);
+char* subtr(char*);
+void subfr(char* );
 
 #ifdef __cplusplus
 }
