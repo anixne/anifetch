@@ -8,6 +8,7 @@ paru -S anifetch
 or
 ```bash
 git clone https://github.com/anixne/anifetch.git
+cd anifetch
 make
 make run -s
 ```
