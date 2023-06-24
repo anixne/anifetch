@@ -60,7 +60,7 @@ int main(void) {
 
   *ram_capacity = (long)getRamCapacity();
   *mem = simplify(unit, (void *)(*ram_capacity));
-  printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[*unit]);
+  printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[(int)*unit]);
 
   free(ram_capacity);
   free(mem);
@@ -89,7 +89,7 @@ int main(void) {
       simplify(unit, (void *)(block_size * free_blocks));
 
   printf(WHITE_CL "Disk usage: %llu / %llu %s\n" DEFAULT_CL, total_size,
-         free_size, units[*unit]);
+         free_size, units[(int)*unit]);
 
   free(unit);
   return 0;
