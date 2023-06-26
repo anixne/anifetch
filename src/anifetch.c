@@ -20,17 +20,17 @@ int main(void) {
   char *envVarValue = getenv("XDG_CURRENT_DESKTOP");
   if (envVarValue == NULL) {
     printf("Desktop environment not found\n");
-    return 1;
-  }
+  } else {
   printf("DE: %s\n", envVarValue);
+  }
 
   // hostname
   char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
   if (gethostname(hostname, sizeof(hostname) * 32) == -1) {
     print_error("Failed to get hostname");
-    return 1;
-  }
+  } else {
   printf(BLUE_CL "Hostname: %s\n" DEFAULT_CL, hostname);
+  }
   free(hostname);
 
   // shell
@@ -60,7 +60,7 @@ int main(void) {
 
   *ram_capacity = (long)getRamCapacity();
   *mem = simplify(unit, (void *)(*ram_capacity));
-  printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[*unit]);
+  printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[(int)*unit]);
 
   free(ram_capacity);
   free(mem);
@@ -89,7 +89,7 @@ int main(void) {
       simplify(unit, (void *)(block_size * free_blocks));
 
   printf(WHITE_CL "Disk usage: %llu / %llu %s\n" DEFAULT_CL, total_size,
-         free_size, units[*unit]);
+         free_size, units[(int)*unit]);
 
   free(unit);
   return 0;
