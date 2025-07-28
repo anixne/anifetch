@@ -1,11 +1,11 @@
 #include "lib.h"
 
 int main(void) {
-  char *line = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
+  char * line = (char * ) calloc(MAX_LINE_LENGTH, sizeof(char));
   struct utsname sys_info;
-  FILE *cpuinfo_file = fopen("/proc/cpuinfo", "r");
+  FILE * cpuinfo_file = fopen("/proc/cpuinfo", "r");
   // Os & kernel info
-  if (uname(&sys_info) == -1) {
+  if (uname( & sys_info) == -1) {
     print_error("Error");
     return 1;
   }
@@ -13,36 +13,41 @@ int main(void) {
     print_error("Error opening system information files");
     return 1;
   }
-  printf(GREEN_CL "Operating System: %s\n" DEFAULT_CL, sys_info.sysname);
-  printf(YELLOW_CL "Kernel version: %s\n" DEFAULT_CL, sys_info.release);
+  printf(GREEN_CL "Operating System: %s\n"
+    DEFAULT_CL, sys_info.sysname);
+  printf(YELLOW_CL "Kernel version: %s\n"
+    DEFAULT_CL, sys_info.release);
 
   // DE
-  char *envVarValue = getenv("XDG_CURRENT_DESKTOP");
+  char * envVarValue = getenv("XDG_CURRENT_DESKTOP");
   if (envVarValue == NULL) {
     printf("Desktop environment not found\n");
   } else {
-  printf("DE: %s\n", envVarValue);
+    printf("DE: %s\n", envVarValue);
   }
 
   // hostname
-  char *hostname = (char *)calloc(MAX_LINE_LENGTH, sizeof(char));
+  char * hostname = (char * ) calloc(MAX_LINE_LENGTH, sizeof(char));
   if (gethostname(hostname, sizeof(hostname) * 32) == -1) {
     print_error("Failed to get hostname");
   } else {
-  printf(BLUE_CL "Hostname: %s\n" DEFAULT_CL, hostname);
+    printf(BLUE_CL "Hostname: %s\n"
+      DEFAULT_CL, hostname);
   }
   free(hostname);
 
   // shell
-  char *shell = getenv("SHELL");
-  printf(PURPLE_CL "Current shell: %s\n" DEFAULT_CL, shell);
+  char * shell = getenv("SHELL");
+  printf(PURPLE_CL "Current shell: %s\n"
+    DEFAULT_CL, shell);
 
   // cpuinfo
   uint8_t cores = sysconf(_SC_NPROCESSORS_ONLN);
   while (fgets(line, MAX_LINE_LENGTH, cpuinfo_file) != NULL) {
     if (strstr(line, "model name") != NULL) {
-      printf(GREEN_CL "CPU (%d): %s" DEFAULT_CL, cores,
-             line + strlen("model name") + 3);
+      printf(GREEN_CL "CPU (%d): %s"
+        DEFAULT_CL, cores,
+        line + strlen("model name") + 3);
       break;
     }
   }
@@ -53,14 +58,22 @@ int main(void) {
   printGpuInfo();
 
   // raminfo
-  char *units[] = {"B", "KB", "MB", "GB", "TB", "PB"};
-  long *ram_capacity = (long *)malloc(sizeof(long));
-  float *mem = (float *)malloc(sizeof(float));
-  char *unit = (char *)malloc(sizeof(char));
+  char * units[] = {
+    "B",
+    "KB",
+    "MB",
+    "GB",
+    "TB",
+    "PB"
+  };
+  long * ram_capacity = (long * ) malloc(sizeof(long));
+  float * mem = (float * ) malloc(sizeof(float));
+  char * unit = (char * ) malloc(sizeof(char));
 
-  *ram_capacity = (long)getRamCapacity();
-  *mem = simplify(unit, (void *)(*ram_capacity));
-  printf(CYAN_CL "RAM: %.1f %s\n" DEFAULT_CL, *mem, units[(int)*unit]);
+  * ram_capacity = (long) getRamCapacity();
+  * mem = simplify(unit, (void * )( * ram_capacity));
+  printf(CYAN_CL "RAM: %.1f %s\n"
+    DEFAULT_CL, * mem, units[(int) * unit]);
 
   free(ram_capacity);
   free(mem);
@@ -72,9 +85,9 @@ int main(void) {
   printf(DEFAULT_CL);
   fclose(cpuinfo_file);
   struct statvfs fs_info;
-  const char *path = "/";
+  const char * path = "/";
 
-  if (statvfs(path, &fs_info) != 0) {
+  if (statvfs(path, & fs_info) != 0) {
     print_error("Error calling statvfs");
     return 1;
   }
@@ -84,12 +97,13 @@ int main(void) {
   unsigned long long total_blocks = fs_info.f_blocks;
   unsigned long long free_blocks = fs_info.f_bfree;
   unsigned long long total_size =
-      simplify((void *)0, (void *)(block_size * total_blocks));
+    simplify((void * ) 0, (void * )(block_size * total_blocks));
   unsigned long long free_size =
-      simplify(unit, (void *)(block_size * free_blocks));
+    simplify(unit, (void * )(block_size * free_blocks));
 
-  printf(WHITE_CL "Disk usage: %llu / %llu %s\n" DEFAULT_CL, total_size,
-         free_size, units[(int)*unit]);
+  printf(WHITE_CL "Disk usage: %llu / %llu %s\n"
+    DEFAULT_CL,
+    free_size, total_size, units[(int) * unit]);
 
   free(unit);
   return 0;
